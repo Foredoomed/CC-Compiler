@@ -20,27 +20,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <stdio.h>
-#include <string.h>
 
+char *substring(char *src, int position, int length);
 
-inline void print(char *value)
-{
-  printf("%s", value);
-}
-
-
-inline void println(char *value)
-{
-  printf("%s\n", value);
-}
-
-
-inline char *substring(char *src, int position, int length)
-{
-   char *ret;
-   strncat(ret, src+position, length);
-   return ret;
-}
 
 #endif

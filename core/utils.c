@@ -18,14 +18,12 @@
 
 
 #include <stdio.h>
-#include "compiler.h"
+#include <string.h>
 
-int main(int argc, char **argv)
+
+char *substring(char *src, int position, int length);
 {
-  if(argc == 1){
-    printf("%s\n","Not enough argument, provide a file to compile.");
-    return 1;
-  }
-
-  return compile(*(argv+1));
+   char *ret;
+   strncat(ret, src+position, length);
+   return ret;
 }

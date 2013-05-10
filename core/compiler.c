@@ -30,29 +30,26 @@
 
 int compile(const char *file)
 {
-  print("Compiling : ");
-  println(file);
+  printf("Compiling : %s", file);
 
   long start = get_ctime();
 
   BOOL success = init(file);
 
   if(!success){
-    print("Unable to open file : ");
-    println(file);
+    printf("Unable to open file : %s", file);
     return 1;
   }
 
   char *output_ext = ".ccc";
   char *ext = strstr(file, '.');
   int found = 0;
-  if(ext != NULL){
+  if(NULL != ext){
     found = ext - file;
   }
 
   if(!found){
-    print("Invalid file : ");
-    println(file);
+    printf("Invalid file : %s", file);
     return 1;
   }
 
@@ -62,7 +59,7 @@ int compile(const char *file)
 
   FILE *out = fopen(output, "wb+");
 
-  if(out == NULL){
+  if(NULL == out){
     return 1;
   }
 
@@ -76,8 +73,7 @@ int compile(const char *file)
 
   long end = get_ctime();
 
-  print("Compliation completed : ");
-  printf("%l", elapsed);
+  printf("Compliation completed : %l", elapsed(start, end));
 
   return result;
 
@@ -88,43 +84,41 @@ int scan()
   while(next()){
 
     if(!is_call()){
-      println("An instruction can only start with a call");
+      printf("%s\n","An instruction can only start with a call");
       return 1;
     }
 
     char *call = get_token();
 
     if(!strcmp(call, "print")){
-      print("The call ");
-      print(call);
-      println(" is not supported");
+      printf("The call %s is not supported\n", call);
       return 1;
     }
 
     if(!next() || !is_left()){
-      println("A call must be followed by a left parenthesis");
+      printf("%s\n","A call must be followed by a left parenthesis");
       return 1;
     }
 
     if(!next()){
-      println("Not enough arguments to the call");
+      printf("%s\n","Not enough arguments to the call");
       return 1;
     }
 
     if(!is_litteral()){
-      println("Can only pass litteral to a call");
+      printf("%s\n","Can only pass litteral to a call");
       return 1;
     }
 
     char *litteral = get_token();
 
     if(!next() || !is_right()){
-      println("The call must be closed with a right parenthesis");
+      printf("%s\n","The call must be closed with a right parenthesis");
       return 1;
     }
 
     if(!next() || !is_stop()){
-      println("Every instruction must be closed by ;");
+      printf("%s\n","Every instruction must be closed by ;");
       return 1;
     }
 

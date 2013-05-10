@@ -29,12 +29,12 @@ long get_ctime()
 }
 
 
-long elapsed(long first, long second)
+long elapsed(long start, long end)
 {
   //double elapsed = (second.tv_sec - first.tv_sec) * 1000.0;
   //elapsed += (second.tv_usec - first.tv_usec) / 1000.0;
 
-  return (second - first) / 1000;
+  return (end - start) / 1000;
 }
 
 
