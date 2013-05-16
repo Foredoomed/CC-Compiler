@@ -21,7 +21,28 @@
 #define UTILS_H
 
 
+#include <stdio.h>
+#include "code.h"
+
 char *substring(char *src, int position, int length);
+
+long get_ctime();
+
+long elapsed(long start, long end);
+
+void read_char(const char *file, char chs[]);
+
+void write_header(FILE *stream);
+
+void write_end(FILE *stream);
+
+void write_simple_call(FILE *stream, CODE code);
+
+void write_one_operand_call(FILE *stream, CODE code, char *litteral);
+
+void write_litteral(FILE *stream, char *litteral);
+
+
 
 
 #endif

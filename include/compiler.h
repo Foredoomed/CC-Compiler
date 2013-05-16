@@ -21,8 +21,9 @@
 #define COMPILER_H
 
 
-
 int compile(const char *file);
+
+int scan();
 
 
 #endif

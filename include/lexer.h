@@ -17,19 +17,16 @@
 ************************************************************************/
 
 
-
 #ifndef LEXER_H
 #define LEXER_H
 
 #include "core.h"
 
-BOOL init(char *file);
+BOOL init(const char *file);
 
 BOOL next();
 
 char *get_token();
-
-BOOL is_call();
 
 BOOL is_litteral();
 
@@ -38,5 +35,9 @@ BOOL is_left();
 BOOL is_right();
 
 BOOL is_stop();
+
+BOOL is_parenthesis();
+
+BOOL is_call();
 
 #endif

@@ -17,18 +17,16 @@
 ************************************************************************/
 
 
-#ifndef LEXER_H
-#define LEXER_H
-
 #include <string.h>
 #include "core.h"
-#include "io.h"
+#include "utils.h"
+
 
 char chs[4096];
 char *token;
 int pos = 0;
 
-BOOL init(char *file)
+BOOL init(const char *file)
 {
   read_char(file, chs);
 
@@ -115,6 +113,3 @@ BOOL is_call()
 {
   return !is_parenthesis() && !is_litteral() && !is_stop();
 }
-
-
-#endif

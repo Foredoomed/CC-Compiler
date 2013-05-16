@@ -17,16 +17,12 @@
 ************************************************************************/
 
 
-#ifndef COMPILER_H
-#define COMPILER_H
-
 #include <string.h>
 #include <stdio.h>
-#include "core.h"
 #include "utils.h"
-#include "time.h"
 #include "lexer.h"
 #include "code.h"
+
 
 int compile(const char *file)
 {
@@ -42,7 +38,7 @@ int compile(const char *file)
   }
 
   char *output_ext = ".ccc";
-  char *ext = strstr(file, '.');
+  char *ext = strstr(file, ".");
   int found = 0;
   if(NULL != ext){
     found = ext - file;
@@ -57,29 +53,31 @@ int compile(const char *file)
   strncat(output, file, found);
   strcat(output, output_ext);
 
-  FILE *out = fopen(output, "wb+");
+  FILE *target = fopen(output, "wb+");
 
-  if(NULL == out){
+  if(NULL == target){
     return 1;
   }
 
-  int result = scan();
+  int result = scan(target);
 
-  fclose(out);
+  fclose(target);
 
   if(result != 0){
-    remove(out);
+    remove(target);
   }
 
   long end = get_ctime();
 
-  printf("Compliation completed : %l", elapsed(start, end));
+  long t = elapsed(start, end);
+
+  printf("Compliation completed : %l", t);
 
   return result;
 
 }
 
-int scan()
+int scan(FILE *target)
 {
   while(next()){
 
@@ -122,18 +120,14 @@ int scan()
       return 1;
     }
 
-    write_one_operand_call(PUSH, litteral);
-    write_simple_call(PRINT);
+    write_one_operand_call(target, PUSH, litteral);
+    write_simple_call(target, PRINT);
 
   }
 
-  write_end();
+  write_end(target);
 
   return 0;
 
 }
 
-
-
-
-#endif
