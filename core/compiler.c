@@ -24,59 +24,6 @@
 #include "code.h"
 
 
-int compile(const char *file)
-{
-  printf("Compiling : %s", file);
-
-  long start = get_ctime();
-
-  BOOL success = init(file);
-
-  if(!success){
-    printf("Unable to open file : %s", file);
-    return 1;
-  }
-
-  char *output_ext = ".ccc";
-  char *ext = strstr(file, ".");
-  int found = 0;
-  if(NULL != ext){
-    found = ext - file;
-  }
-
-  if(!found){
-    printf("Invalid file : %s", file);
-    return 1;
-  }
-
-  char *output;
-  strncat(output, file, found);
-  strcat(output, output_ext);
-
-  FILE *target = fopen(output, "wb+");
-
-  if(NULL == target){
-    return 1;
-  }
-
-  int result = scan(target);
-
-  fclose(target);
-
-  if(result != 0){
-    remove(target);
-  }
-
-  long end = get_ctime();
-
-  long t = elapsed(start, end);
-
-  printf("Compliation completed : %l", t);
-
-  return result;
-
-}
-
 int scan(FILE *target)
 {
   while(next()){
@@ -128,6 +75,59 @@ int scan(FILE *target)
   write_end(target);
 
   return 0;
+
+}
+
+int compile(const char *file)
+{
+  printf("Compiling : %s", file);
+
+  long start = get_ctime();
+
+  BOOL success = init(file);
+
+  if(!success){
+    printf("Unable to open file : %s", file);
+    return 1;
+  }
+
+  char *output_ext = ".ccc";
+  char *ext = strstr(file, ".");
+  int found = 0;
+  if(NULL != ext){
+    found = ext - file;
+  }
+
+  if(!found){
+    printf("Invalid file : %s", file);
+    return 1;
+  }
+
+  char *output;
+  strncat(output, file, found);
+  strcat(output, output_ext);
+
+  FILE *target = fopen(output, "wb+");
+
+  if(NULL == target){
+    return 1;
+  }
+
+  int result = scan(target);
+
+  fclose(target);
+
+  if(result != 0){
+    remove(output);
+  }
+
+  long end = get_ctime();
+
+  long t = elapsed(start, end);
+
+  printf("Compliation completed : %ld", t);
+
+  return result;
 
 }
 

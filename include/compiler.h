@@ -21,9 +21,12 @@
 #define COMPILER_H
 
 
+#include <stdio.h>
+
+
 int compile(const char *file);
 
-int scan();
+int scan(FILE *target);
 
 
 #endif
