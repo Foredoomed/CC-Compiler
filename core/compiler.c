@@ -82,7 +82,7 @@ int compile(const char *file)
 {
   printf("Compiling : %s", file);
 
-  long start = get_ctime();
+  long start = get_time();
 
   BOOL success = init(file);
 
@@ -121,7 +121,7 @@ int compile(const char *file)
     remove(output);
   }
 
-  long end = get_ctime();
+  long end = get_time();
 
   long t = elapsed(start, end);
 

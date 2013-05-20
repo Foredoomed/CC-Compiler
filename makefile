@@ -6,15 +6,15 @@ MKDIR_P = mkdir -p
 
 .PHONY: directories
 
-all: directories utils lexer compiler main cc
+all: directories utils lexer compiler main ccc
 
 directories: bin
 
 bin :
 	${MKDIR_P} bin
 
-cc : main compiler
-	$(CC) $(LFLAGS) -o bin/cc bin/main.o bin/compiler.o bin/lexer.o bin/utils.o
+ccc : main compiler
+	$(CC) $(LFLAGS) -o bin/ccc bin/main.o bin/compiler.o bin/lexer.o bin/utils.o
 
 main : include/compiler.h
 	$(CC) $(CFLAGS) -o bin/main.o core/main.c

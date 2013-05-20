@@ -30,7 +30,7 @@ char *substring(char *src, int position, int length)
    return ret;
 }
 
-long get_ctime()
+long get_time()
 {
   return (long)(time(NULL));
 }

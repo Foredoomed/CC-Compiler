@@ -27,7 +27,7 @@
 
 char *substring(char *src, int position, int length);
 
-long get_ctime();
+long get_time();
 
 long elapsed(long start, long end);
 
