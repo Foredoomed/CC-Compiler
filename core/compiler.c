@@ -80,18 +80,18 @@ int scan(FILE *target)
 
 int compile(const char *file)
 {
-  printf("Compiling : %s", file);
+  printf("Compiling : %s\n", file);
 
   long start = get_time();
 
   BOOL success = init(file);
 
   if(!success){
-    printf("Unable to open file : %s", file);
+    printf("Unable to open file : %s\n", file);
     return 1;
   }
 
-  char *output_ext = ".ccc";
+  char *output_ext = ".cc";
   char *ext = strstr(file, ".");
   int found = 0;
   if(NULL != ext){
@@ -99,7 +99,7 @@ int compile(const char *file)
   }
 
   if(!found){
-    printf("Invalid file : %s", file);
+    printf("Invalid file : %s\n", file);
     return 1;
   }
 
@@ -125,7 +125,7 @@ int compile(const char *file)
 
   long t = elapsed(start, end);
 
-  printf("Compliation completed : %ld", t);
+  printf("Compliation completed : %ld\n", t);
 
   return result;
 
