@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <libgen.h>
 #include "utils.h"
 #include "lexer.h"
 #include "code.h"
@@ -91,25 +92,22 @@ int compile(const char *file)
     return 1;
   }
 
-  char *output_ext = ".cc";
-  char *ext = strstr(file, ".");
-  int found = 0;
-  if(NULL != ext){
-    found = ext - file;
-  }
+  char *found = strstr(file, ".cc");
 
-  if(!found){
+  if(NULL == found){
     printf("Invalid file : %s\n", file);
     return 1;
   }
 
-  char *output;
-  strncat(output, file, found);
-  strcat(output, output_ext);
+  char *name = basename(file);
+  int length = strlen(name) - 3; /* extract xxx.cc to xxx */
+  char output[length];
+  strncpy(output, name, length);
 
   FILE *target = fopen(output, "wb+");
 
   if(NULL == target){
+    printf("Unable to open file : %s\n", output);
     return 1;
   }
 
