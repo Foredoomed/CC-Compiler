@@ -49,10 +49,17 @@ void read_char(const char *file, char chs[])
   fp = fopen(file, "r");
 
   if(NULL == fp){
+    printf("Unable to open file : %s\n", file);
     return;
   }
 
-  fread(chs, sizeof(chs), 1, fp);
+  //fread(chs, sizeof(chs), 1, fp);
+
+  char line[32];
+  while(fgets(line, sizeof line, fp) != NULL){
+    strcat(chs, line);
+  }
+
   fclose(fp);
 
 }
@@ -75,7 +82,6 @@ void write_simple_call(FILE *stream, CODE code)
 void write_one_operand_call(FILE *stream, CODE code, char *litteral)
 {
   fprintf(stream, "%d", code);
-
 }
 
 void write_litteral(FILE *stream, char *litteral)
