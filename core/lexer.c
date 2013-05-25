@@ -65,14 +65,13 @@ BOOL next()
       strcat(token, &current);
     }
 
-    pos--;
   }
 
   if(pos == 4095){
     return false;
   }
 
-  if(token[0] == 0){
+  if(token[pos] == '\0'){
     return false;
   }
 
@@ -88,22 +87,22 @@ char *get_token()
 
 BOOL is_litteral()
 {
-  return token[0] == '"';
+  return token[pos] == '"';
 }
 
 BOOL is_left()
 {
-  return token[0] == '(';
+  return token[pos] == '(';
 }
 
 BOOL is_right()
 {
-  return token[0] == ')';
+  return token[pos] == ')';
 }
 
 BOOL is_stop()
 {
-  return token[0] == ';';
+  return token[pos] == ';';
 }
 
 BOOL is_parenthesis()
