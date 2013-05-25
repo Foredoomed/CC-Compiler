@@ -22,9 +22,11 @@
 #include "utils.h"
 
 
-char chs[4096];
-char token[4096];
-int pos = 0;
+#define MAX 4096
+char chs[MAX];
+char token[MAX];
+int pos = 0; /* pos of chs, index of token is pos - 1 */
+
 
 BOOL init(const char *file)
 {
@@ -35,7 +37,6 @@ BOOL init(const char *file)
 
 BOOL next()
 {
-
   char current = chs[pos];
 
   while((current == '\n' || current == ' ') && current != '\0'){
@@ -48,15 +49,17 @@ BOOL next()
 
   if(current == '(' || current == ')' || current == ';'){
     strcat(token, &current);
+    pos++;
   }
   else if(current == '"'){
     strcat(token, &current);
 
-    while((current = chs[++pos]) && current != '"'){
+    while((current = chs[++pos]) != '"'){
       strcat(token, &current);
     }
 
     strcat(token, &current);
+    pos++;
   }
   else {
     strcat(token, &current);
@@ -64,14 +67,13 @@ BOOL next()
     while((current = chs[++pos]) && !(current == '(' || current == ')' || current == ';' || current == ' ')){
       strcat(token, &current);
     }
-
   }
 
-  if(pos == 4095){
+  if(pos == MAX - 1){
     return false;
   }
 
-  if(token[pos] == '\0'){
+  if(token[0] == 0){
     return false;
   }
 
@@ -87,22 +89,22 @@ char *get_token()
 
 BOOL is_litteral()
 {
-  return token[pos] == '"';
+  return token[pos - 1] == '"';
 }
 
 BOOL is_left()
 {
-  return token[pos] == '(';
+  return token[pos - 1] == '(';
 }
 
 BOOL is_right()
 {
-  return token[pos] == ')';
+  return token[pos - 1] == ')';
 }
 
 BOOL is_stop()
 {
-  return token[pos] == ';';
+  return token[pos - 1] == ';';
 }
 
 BOOL is_parenthesis()

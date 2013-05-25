@@ -26,6 +26,9 @@
 
 int scan(FILE *target)
 {
+
+  write_header(target);
+
   while(next() == true){
 
     if(is_call() == false){
@@ -101,7 +104,7 @@ int compile(const char *file)
   char *name = strrchr(file, '/');
   int length = strlen(name); /* make xxx.ccs to xxx.ccc */
   char output[length];
-  strncpy(output, ++name, length - 1);
+  strncpy(output, ++name, length - 2);
   strcat(output, "c");
 
   FILE *target = fopen(output, "wb+");
