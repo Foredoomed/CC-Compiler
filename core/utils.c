@@ -79,11 +79,6 @@ void write_simple_call(FILE *stream, CODE code)
   fprintf(stream, "%d", code);
 }
 
-void write_one_operand_call(FILE *stream, CODE code, char *litteral)
-{
-  fprintf(stream, "%d", code);
-}
-
 void write_litteral(FILE *stream, char *litteral)
 {
   fprintf(stream, "%s", "S");
@@ -92,3 +87,11 @@ void write_litteral(FILE *stream, char *litteral)
   char *temp = substring(litteral, 1, (int)(strlen(litteral) - 2));
   fprintf(stream, "%s", temp);
 }
+
+void write_one_operand_call(FILE *stream, CODE code, char *litteral)
+{
+  fprintf(stream, "%d", code);
+
+  write_litteral(stream, litteral);
+}
+

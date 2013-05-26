@@ -39,29 +39,31 @@ int scan(FILE *target)
     char *call = get_token();
 
     if(strcmp(call, "print") != 0){
-      printf("The call %s is not supported\n", call);
+      printf("The function call %s is not supported\n", call);
       return 1;
     }
 
     if(next() == false || is_left() == false){
-      printf("A call must be followed by a left parenthesis\n");
+      printf("A function call must be followed by a left parenthesis\n");
       return 1;
     }
 
     if(next() == false){
-      printf("Not enough arguments to the call\n");
+      printf("Not enough arguments to the function call\n");
       return 1;
     }
 
     if(is_litteral() == false){
-      printf("Can only pass litteral to a call\n");
+      printf("Can only pass litteral to a function call\n");
       return 1;
     }
 
-    char *litteral = get_token();
+    char *temp = get_token(); /* It changes */
+    char litteral[32];
+    strcpy(litteral, temp);
 
     if(next() == false || is_right() == false){
-      printf("The call must be closed with a right parenthesis\n");
+      printf("The function call must be closed with a right parenthesis\n");
       return 1;
     }
 
