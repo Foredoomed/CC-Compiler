@@ -37,35 +37,37 @@ BOOL init(const char *file)
 
 BOOL next()
 {
-  char current = chs[pos];
+  char current[] = "\0\0";
 
-  while((current == '\n' || current == ' ') && current != '\0'){
+  current[0] = chs[pos];
+
+  while((current[0] == '\n' || current[0] == ' ') && current[0] != '\0'){
     pos++;
   }
 
-  if(current == '\0'){
+  if(current[0] == '\0'){
     return false;
   }
 
-  if(current == '(' || current == ')' || current == ';'){
-    strcat(token, &current);
+  if(current[0] == '(' || current[0] == ')' || current[0] == ';'){
+    strcat(token, current);
     pos++;
   }
-  else if(current == '"'){
-    strcat(token, &current);
+  else if(current[0] == '"'){
+    strcat(token, "\"");
 
-    while((current = chs[++pos]) != '"'){
-      strcat(token, &current);
+    while((current[0] = chs[++pos]) != '"'){
+      strcat(token, current);
     }
 
-    strcat(token, &current);
+    strcat(token, "\"");
     pos++;
   }
   else {
-    strcat(token, &current);
+    strcat(token, current);
 
-    while((current = chs[++pos]) && !(current == '(' || current == ')' || current == ';' || current == ' ')){
-      strcat(token, &current);
+    while((current[0] = chs[++pos]) && !(current[0] == '(' || current[0] == ')' || current[0] == ';' || current[0] == ' ')){
+      strcat(token, current);
     }
   }
 
@@ -78,7 +80,6 @@ BOOL next()
   }
 
   return true;
-
 
 }
 
