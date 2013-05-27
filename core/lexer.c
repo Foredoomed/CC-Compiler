@@ -43,6 +43,7 @@ BOOL next()
 
   while((current[0] == '\n' || current[0] == ' ') && current[0] != '\0'){
     pos++;
+    current[0] = chs[pos];
   }
 
   if(current[0] == '\0'){

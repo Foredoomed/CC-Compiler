@@ -59,8 +59,10 @@ int scan(FILE *target)
     }
 
     char *temp = get_token(); /* It changes */
-    char litteral[32];
+    int len = strlen(temp);
+    char litteral[len];
     strcpy(litteral, temp);
+    litteral[len] = 0;
 
     if(next() == false || is_right() == false){
       printf("The function call must be closed with a right parenthesis\n");

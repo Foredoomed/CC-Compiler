@@ -23,13 +23,6 @@
 #include "code.h"
 
 
-char *substring(char *src, int position, int length)
-{
-   char *ret;
-   strncat(ret, src+position, length);
-   return ret;
-}
-
 long get_time()
 {
   return (long)(time(NULL));
@@ -71,26 +64,32 @@ void write_header(FILE *stream)
 
 void write_end(FILE *stream)
 {
-  fprintf(stream, "%d", END);
+  fprintf(stream, "%d", (int)END);
 }
 
 void write_simple_call(FILE *stream, CODE code)
 {
-  fprintf(stream, "%d", code);
+  fprintf(stream, "%d", (int)code);
 }
 
 void write_litteral(FILE *stream, char *litteral)
 {
   fprintf(stream, "%s", "S");
-  fprintf(stream, "%d", (int)(strlen(litteral) - 2));
 
-  char *temp = substring(litteral, 1, (int)(strlen(litteral) - 2));
+  /* Remove double quoters */
+  int length =(int)(strlen(litteral) - 2);
+  fprintf(stream, "%d", length);
+
+  char temp[length];
+  strncpy(temp, litteral + 1, length);
+  temp[length] = 0;
+
   fprintf(stream, "%s", temp);
 }
 
 void write_one_operand_call(FILE *stream, CODE code, char *litteral)
 {
-  fprintf(stream, "%d", code);
+  fprintf(stream, "%d", (int)code);
 
   write_litteral(stream, litteral);
 }
