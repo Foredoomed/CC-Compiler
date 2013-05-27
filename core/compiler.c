@@ -130,7 +130,7 @@ int compile(const char *file)
 
   long t = elapsed(start, end);
 
-  printf("Compliation completed : %ld\n", t);
+  printf("Compilation finished in %ld\n", t);
 
   return result;
 
