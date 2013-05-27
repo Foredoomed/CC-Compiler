@@ -1,0 +1,5 @@
+Clean C(CC) 0.0.1 - 2013.05.27
+
+* First version of CC.
+* Supports only one instruction : print
+* Is an interpreted language
