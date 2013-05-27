@@ -21,15 +21,13 @@
 #define TYPE_H
 
 
-enum TYPE
+typedef enum type
 {
   STRING = 0,
 
   INT = 1
 
-}
-
-
+} TYPE:
 
 
 #endif

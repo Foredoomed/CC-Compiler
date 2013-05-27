@@ -32,7 +32,7 @@ int scan(FILE *target)
   while(next() == true){
 
     if(is_call() == false){
-      printf("An instruction can only start with a call\n");
+      printf("An instruction can only start with a function call\n");
       return 1;
     }
 
@@ -94,7 +94,7 @@ int compile(const char *file)
   BOOL success = init(file);
 
   if(!success){
-    printf("Unable to open file : %s\n", file);
+    printf("Error opening file : %s\n", file);
     return 1;
   }
 
@@ -114,7 +114,7 @@ int compile(const char *file)
   FILE *target = fopen(output, "wb+");
 
   if(NULL == target){
-    printf("Unable to open file : %s\n", output);
+    printf("Error opening file : %s\n", output);
     return 1;
   }
 
@@ -128,9 +128,9 @@ int compile(const char *file)
 
   long end = get_time();
 
-  long t = elapsed(start, end);
+  double t = elapsed(start, end);
 
-  printf("Compilation finished in %ld\n", t);
+  printf("Finished in %lf\n", t);
 
   return result;
 

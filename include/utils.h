@@ -27,7 +27,7 @@
 
 long get_time();
 
-long elapsed(long start, long end);
+double elapsed(long start, long end);
 
 void read_char(const char *file, char chs[]);
 

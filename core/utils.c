@@ -28,7 +28,7 @@ long get_time()
   return (long)(time(NULL));
 }
 
-long elapsed(long start, long end)
+double elapsed(long start, long end)
 {
   //double elapsed = (second.tv_sec - first.tv_sec) * 1000.0;
   //elapsed += (second.tv_usec - first.tv_usec) / 1000.0;
@@ -42,7 +42,7 @@ void read_char(const char *file, char chs[])
   fp = fopen(file, "r");
 
   if(NULL == fp){
-    printf("Unable to open file : %s\n", file);
+    printf("Error opening file : %s\n", file);
     return;
   }
 

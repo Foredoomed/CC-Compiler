@@ -24,7 +24,7 @@
 int main(int argc, char **argv)
 {
   if(argc == 1){
-    printf("Error: not enough argument, provide a file to compile");
+    printf("Error : provide a file to compile");
     return 1;
   }
 

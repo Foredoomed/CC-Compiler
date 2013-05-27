@@ -22,6 +22,7 @@
 
 #include "core.h"
 
+
 BOOL init(const char *file);
 
 BOOL next();
@@ -39,5 +40,6 @@ BOOL is_stop();
 BOOL is_parenthesis();
 
 BOOL is_call();
+
 
 #endif
