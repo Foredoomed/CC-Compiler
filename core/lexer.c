@@ -18,6 +18,7 @@
 
 
 #include <string.h>
+#include <ctype.h>
 #include "core.h"
 #include "utils.h"
 
@@ -41,7 +42,7 @@ BOOL next()
 
   current[0] = chs[pos];
 
-  while((current[0] == '\n' || current[0] == ' ') && current[0] != '\0'){
+  while(isspace(current[0]) && current[0] != '\0'){
     pos++;
     current[0] = chs[pos];
   }
