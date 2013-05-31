@@ -41,5 +41,9 @@ BOOL is_parenthesis();
 
 BOOL is_call();
 
+int is_alpha();
+
+BOOL is_assignment();
+
 
 #endif

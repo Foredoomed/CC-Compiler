@@ -60,9 +60,11 @@ typedef enum code {
   PRINTI = 110,
   PRINTS = 111*/
 
-  PUSH = 0,
+  PUSHS = 0,
   PRINT = 1,
-  END = 2
+  END = 2,
+  PUSHV = 3,
+  ASSIGN = 4
 
 
 } CODE;

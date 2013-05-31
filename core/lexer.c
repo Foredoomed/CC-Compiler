@@ -29,72 +29,6 @@ char token[MAX];
 int pos = 0; /* index of chs */
 int tpos = 0; /* index of token */
 
-BOOL init(const char *file)
-{
-  read_char(file, chs);
-
-  return chs != NULL;
-}
-
-BOOL next()
-{
-  char current[] = "\0\0";
-
-  current[0] = chs[pos];
-
-  while(isspace(current[0]) && current[0] != '\0'){
-    pos++;
-    current[0] = chs[pos];
-  }
-
-  if(current[0] == '\0'){
-    return false;
-  }
-
-  if(current[0] == '(' || current[0] == ')' || current[0] == ';'){
-    memset(token, 0, sizeof(token)); /* Empty the array */
-    strcpy(token, current);
-    tpos = 1;
-    pos++;
-  }
-  else if(current[0] == '"'){
-    tpos = 0;
-    memset(token, 0, sizeof(token));
-
-    current[0] = '"';
-    strcpy(token, current);
-    tpos = 1;
-    while((current[0] = chs[++pos]) != '"'){
-      strcat(token, current);
-      tpos++;
-    }
-
-    current[0] = '"';
-    strcat(token, current);
-    tpos++;
-    pos++;
-  }
-  else {
-
-    strcpy(token, current);
-    tpos = 1;
-    while((current[0] = chs[++pos]) && !(current[0] == '(' || current[0] == ')' || current[0] == ';' || current[0] == ' ')){
-      strcat(token, current);
-      tpos++;
-    }
-  }
-
-  if(pos == MAX - 1){
-    return false;
-  }
-
-  if(token[0] == 0){
-    return false;
-  }
-
-  return true;
-
-}
 
 char *get_token()
 {
@@ -130,3 +64,87 @@ BOOL is_call()
 {
   return !is_parenthesis() && !is_litteral() && !is_stop();
 }
+
+int is_alpha()
+{
+  return isalpha(token[tpos - 1]);
+}
+
+BOOL is_assignment()
+{
+  return token[tpos - 1] == '=';
+}
+
+
+BOOL init(const char *file)
+{
+  read_char(file, chs);
+
+  return chs != NULL;
+}
+
+BOOL next()
+{
+  char current[] = "\0\0";
+
+  current[0] = chs[pos];
+
+  while(isspace(current[0]) && current[0] != '\0'){
+    current[0] = chs[++pos];
+  }
+
+  if(current[0] == '\0'){
+    return false;
+  }
+
+  if(current[0] == '"'){
+
+    memset(token, 0, sizeof(token)); /* Clear the array */
+    strcpy(token, current);
+
+    tpos = 1;
+    while((current[0] = chs[++pos]) != '"'){
+      strcat(token, current);
+      tpos++;
+    }
+
+    current[0] = '"';
+    strcat(token, current);
+    tpos++;
+    pos++;
+
+  } else if(is_alpha(current[0])){
+
+    memset(token, 0, sizeof(token));
+    strcpy(token, current);
+
+    tpos = 1;
+    while((current[0] = chs[++pos]) != '"'){
+      strcat(token, current);
+      tpos++;
+    }
+
+    current[0] = '"';
+    strcat(token, current);
+    tpos++;
+    pos++;
+
+  } else {
+
+    memset(token, 0, sizeof(token));
+    strcpy(token, current);
+
+  }
+
+  if(pos == MAX - 1){
+    return false;
+  }
+
+  if(token[0] == 0){
+    return false;
+  }
+
+  return true;
+
+}
+

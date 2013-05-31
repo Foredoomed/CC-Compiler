@@ -22,66 +22,148 @@
 #include "utils.h"
 #include "lexer.h"
 #include "code.h"
+#include "hashmap.h"
 
+
+int parse_call(FILE *target, char *token, map_t vars)
+{
+  if(strcmp(token, "print") != 0){
+
+    printf("The function call %s is not supported\n", token);
+    return 1;
+
+  }
+
+  if(next() == false){
+    printf("Not enough arguments to the function call %s\n", token);
+    return 1;
+  }
+
+  if(is_litteral()){
+
+    write_one_operand_call(target, PUSHS, token);
+
+  } else if(is_alpha()){
+    char *value;
+    int v = hashmap_get(vars, token, (void*)value);
+
+    if(v == MAP_MISSING){
+      printf("The variable %s does not exist\n", token);
+      return 1;
+    }
+
+    write_one_operand_call(target, PUSHV, token);
+
+  } else {
+
+    printf("Can only pass litteral or a variable to a function call\n");
+    return 1;
+  }
+
+  char *temp = get_token(); /* It changes */
+  int len = strlen(temp);
+  char litteral[len];
+  strcpy(litteral, temp);
+  litteral[len] = 0;
+
+  if(next() == false || is_right() == false){
+    printf("The function call must be closed with a right parenthesis\n");
+    return 1;
+  }
+
+  if(next() == false || is_stop() == false){
+    printf("Every instruction must be closed by a semicolon\n");
+    return 1;
+  }
+
+  write_simple_call(target, PRINT);
+
+  return 0;
+}
+
+int parse_assignment(FILE *target, char *token, map_t vars)
+{
+  if(next() == false){
+     printf("Syntax error : invalid assignment\n");
+  }
+
+  char *value;
+  int v = hashmap_get(vars, token, (void*)value);
+
+  if(is_litteral()){
+
+    write_one_operand_call(target, PUSHS, token);
+
+  } else if(is_alpha()){
+
+    if(v == MAP_MISSING){
+      printf("The variable %s does not exist\n", token);
+      return 1;
+    }
+
+    write_one_operand_call(target, PUSHV, token);
+  }
+
+  char *temp = get_token(); /* It changes */
+  int len = strlen(temp);
+  char litteral[len];
+  strcpy(litteral, temp);
+  litteral[len] = 0;
+
+  if(next() == false || is_stop() == false){
+    printf("Every instruction must be closed by a semicolon\n");
+    return 1;
+  }
+
+  hashmap_put(vars, token, litteral);
+  write_one_operand_call(target, ASSIGN, token);
+
+  return 0;
+}
 
 int scan(FILE *target)
 {
+  map_t vars = hashmap_new();
 
   write_header(target);
 
+  int ret = 0;
+
   while(next() == true){
 
-    if(is_call() == false){
+    if(is_alpha() == false){
+
       printf("An instruction can only start with a function call\n");
       return 1;
     }
 
-    char *call = get_token();
-
-    if(strcmp(call, "print") != 0){
-      printf("The function call %s is not supported\n", call);
-      return 1;
-    }
-
-    if(next() == false || is_left() == false){
-      printf("A function call must be followed by a left parenthesis\n");
-      return 1;
-    }
+    char *token = get_token();
 
     if(next() == false){
-      printf("Not enough arguments to the function call\n");
+
+      printf("Incomplete instruction : %s\n", token);
       return 1;
+
     }
 
-    if(is_litteral() == false){
-      printf("Can only pass litteral to a function call\n");
+    if(is_left()){
+
+      ret = parse_call(target, token, vars);  /* It is a call */
+
+    } else if(is_assignment()){
+
+      ret = parse_assignment(target, token, vars);  /* It is an assignment */
+
+    } else {
+      printf("%s is not a valid instruction\n", token);
       return 1;
     }
-
-    char *temp = get_token(); /* It changes */
-    int len = strlen(temp);
-    char litteral[len];
-    strcpy(litteral, temp);
-    litteral[len] = 0;
-
-    if(next() == false || is_right() == false){
-      printf("The function call must be closed with a right parenthesis\n");
-      return 1;
-    }
-
-    if(next() == false || is_stop() == false){
-      printf("Every instruction must be closed by ;\n");
-      return 1;
-    }
-
-    write_one_operand_call(target, PUSH, litteral);
-    write_simple_call(target, PRINT);
 
   }
 
   write_end(target);
 
-  return 0;
+  return ret;
 
 }
 

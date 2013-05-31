@@ -28,5 +28,9 @@ int compile(const char *file);
 
 int scan(FILE *target);
 
+void parse_call();
+
+void parse_assignment();
+
 
 #endif
