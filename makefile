@@ -1,6 +1,6 @@
 CC = gcc
 DEBUG = -g
-CFLAGS = -Wall -c $(DEBUG) -Iinclude
+CFLAGS = -Wall -c $(DEBUG) -Isrc/include
 LFLAGS = -Wall $(DEBUG)
 MKDIR_P = mkdir -p
 
@@ -16,20 +16,20 @@ bin :
 ccc : main compiler
 	$(CC) $(LFLAGS) -o bin/ccc bin/main.o bin/compiler.o bin/lexer.o bin/utils.o bin/hashmap.o
 
-main : include/compiler.h
-	$(CC) $(CFLAGS) -o bin/main.o core/main.c
+main : src/include/compiler.h
+	$(CC) $(CFLAGS) -o bin/main.o src/core/main.c
 
-compiler : include/compiler.h include/lexer.h include/utils.h include/core.h include/code.h
-	$(CC) $(CFLAGS) -o bin/compiler.o core/compiler.c
+compiler : src/include/compiler.h src/include/lexer.h src/include/utils.h src/include/core.h src/include/code.h src/include/hashmap.h
+	$(CC) $(CFLAGS) -o bin/compiler.o src/core/compiler.c
 
-lexer : include/lexer.h include/core.h include/utils.h
-	$(CC) $(CFLAGS) -o bin/lexer.o core/lexer.c
+lexer : src/include/lexer.h src/include/core.h src/include/utils.h
+	$(CC) $(CFLAGS) -o bin/lexer.o src/core/lexer.c
 
-utils : include/utils.h include/core.h
-	$(CC) $(CFLAGS) -o bin/utils.o core/utils.c
+utils : src/include/utils.h src/include/core.h
+	$(CC) $(CFLAGS) -o bin/utils.o src/core/utils.c
 
-hashmap : include/hashmap.h
-	$(CC) $(CFLAGS) -o bin/hashmap.o core/hashmap.c
+hashmap : src/include/hashmap.h
+	$(CC) $(CFLAGS) -o bin/hashmap.o src/core/hashmap.c
 
 clean:
 	rm -f bin/*
