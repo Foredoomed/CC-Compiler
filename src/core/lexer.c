@@ -67,7 +67,7 @@ BOOL is_call()
 
 int is_alpha()
 {
-  return isalpha(token[tpos - 1]);
+  return isalpha(token[0]);
 }
 
 BOOL is_assignment()
@@ -113,26 +113,28 @@ BOOL next()
     tpos++;
     pos++;
 
-  } else if(is_alpha(current[0])){
+  } else if(isalpha(current[0])){
 
-    memset(token, 0, sizeof(token));
-    strcpy(token, current);
+    if(tpos == 0){
+      memset(token, 0, sizeof(token)); /* Clear the array */
+      strcpy(token, current);
+      tpos = 1;
 
-    tpos = 1;
-    while((current[0] = chs[++pos]) != '"'){
+    } else {
       strcat(token, current);
       tpos++;
     }
 
-    current[0] = '"';
-    strcat(token, current);
-    tpos++;
-    pos++;
+    while((current[0] = chs[++pos]) && isalpha(current[0])){
+      strcat(token, current);
+      tpos++;
+    }
 
   } else {
 
-    memset(token, 0, sizeof(token));
-    strcpy(token, current);
+    strcat(token, current);
+    pos++;
+    tpos++;
 
   }
 

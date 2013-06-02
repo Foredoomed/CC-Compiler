@@ -25,33 +25,38 @@
 #include "hashmap.h"
 
 
-int parse_call(FILE *target, char *token, map_t vars)
+int parse_call(FILE *target, char *token, map_t *vars)
 {
-  if(strcmp(token, "print") != 0){
-    printf("The function call %s is not supported\n", token);
+  int len = strlen(token) - 1;
+  char temp[len];
+  strncpy(temp, token, len);
+  temp[len] = 0;
+
+  if(strcmp(temp, "print") != 0){
+    printf("The function call %s is not supported\n", temp);
     return 1;
   }
 
   if(next() == false){
-    printf("Not enough arguments to the function call %s\n", token);
+    printf("Not enough arguments to the function call %s\n", temp);
     return 1;
   }
 
   if(is_litteral()){
-
-    write_one_operand_call(target, PUSHS, token);
+    char *call = get_token();
+    write_one_operand_call(target, PUSHS, call);
 
   } else if(is_alpha()){
-
+    char *var = get_token();
     char *value;
-    int v = hashmap_get(vars, token, (void*)value);
+    int v = hashmap_get(*vars, var, (void*)value);
 
     if(v == MAP_MISSING){
-      printf("The variable %s does not exist\n", token);
+      printf("The variable %s does not exist\n", var);
       return 1;
     }
 
-    write_one_operand_call(target, PUSHV, token);
+    write_one_operand_call(target, PUSHV, value);
 
   } else {
 
@@ -74,32 +79,47 @@ int parse_call(FILE *target, char *token, map_t vars)
   return 0;
 }
 
-int parse_assignment(FILE *target, char *token, map_t vars)
+int parse_assignment(FILE *target, char *token, map_t *vars)
 {
-  if(next() == false){
-     printf("Syntax error : invalid assignment\n");
+  char temp[6];
+  strncpy(temp, token, 6);
+  temp[6] = 0;
+
+  int length = strlen(token) - 7;
+  char var[length];
+  strncpy(var, token+6, length);
+  var[length] = 0;
+
+  if(strcmp(temp, "string") != 0){
+    printf("The assignment only supports string\n");
+    return 1;
   }
 
-  char *temp = get_token(); /* It changes */
-  int len = strlen(temp);
-  char litteral[len];
-  strcpy(litteral, temp);
-  litteral[len] = 0;
+  if(next() == false){
+     printf("Syntax error : invalid assignment\n");
+     return 1;
+  }
 
-  int v = hashmap_get(vars, token, (void*)litteral);
+  char *t = get_token(); /* It changes */
+  int len = strlen(t);
+  char value[len];
+  strcpy(value, t);
+  value[len] = 0;
+
+  int v = hashmap_get(*vars, var, (void*)value);
 
   if(is_litteral()){
 
-    write_one_operand_call(target, PUSHS, token);
+    write_one_operand_call(target, PUSHS, t);
 
   } else if(is_alpha()){
 
     if(v == MAP_MISSING){
-      printf("The variable %s does not exist\n", token);
+      printf("The variable %s does not exist\n", var);
       return 1;
     }
 
-    write_one_operand_call(target, PUSHV, token);
+    write_one_operand_call(target, PUSHV, var);
   }
 
   if(next() == false || is_stop() == false){
@@ -107,8 +127,8 @@ int parse_assignment(FILE *target, char *token, map_t vars)
     return 1;
   }
 
-  hashmap_put(vars, token, litteral);
-  write_one_operand_call(target, ASSIGN, token);
+  hashmap_put(*vars, var, value);
+  write_one_operand_call(target, ASSIGN, var);
 
   return 0;
 }
@@ -125,29 +145,29 @@ int scan(FILE *target)
 
     if(is_alpha() == false){
 
-      printf("An instruction can only start with a function call\n");
+      printf("An instruction can only start with a function call or assignment\n");
       return 1;
     }
 
-    char *token = get_token();
+    char *t = get_token();
 
     if(next() == false){
 
-      printf("Incomplete instruction : %s\n", token);
+      printf("Incomplete instruction\n");
       return 1;
 
     }
 
     if(is_left()){
 
-      ret = parse_call(target, token, vars);  /* It is a call */
+      ret = parse_call(target, t, &vars);  /* It is a call */
 
-    } else if(is_assignment()){
+    } else if(next() == true && is_assignment()){
 
-      ret = parse_assignment(target, token, vars);  /* It is an assignment */
+      ret = parse_assignment(target, t, &vars);  /* It is an assignment */
 
     } else {
-      printf("%s is not a valid instruction\n", token);
+      printf("Not a valid instruction\n");
       return 1;
     }
 
@@ -180,9 +200,17 @@ int compile(const char *file)
   }
 
   char *name = strrchr(file, '/');
-  int length = strlen(name); /* make xxx.ccs to xxx.ccc */
+  int length;
+
+  /* make xxx.ccs to xxx.ccc */
+  if(name != NULL){
+    length = strlen(name) - 2;
+  }else {
+    length = strlen(file) - 1;
+  }
+
   char output[length];
-  strncpy(output, ++name, length - 2);
+  strncpy(output, name == NULL ? file : ++name, length);
   strcat(output, "c");
 
   FILE *target = fopen(output, "wb+");
