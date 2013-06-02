@@ -59,7 +59,7 @@ void read_char(const char *file, char chs[])
 
 void write_header(FILE *stream)
 {
-  fprintf(stream, "%s", "Clean C");
+  fprintf(stream, "%s", "CC");
 }
 
 void write_end(FILE *stream)
