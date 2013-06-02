@@ -72,25 +72,32 @@ void write_simple_call(FILE *stream, CODE code)
   fprintf(stream, "%d", (int)code);
 }
 
-void write_litteral(FILE *stream, char *litteral)
+void write_litteral(FILE *stream, char *value)
 {
   fprintf(stream, "%s", "S");
 
   /* Remove double quoters */
-  int length =(int)(strlen(litteral) - 2);
-  fprintf(stream, "%d", length);
+  int length;
+  char *index = strchr(value, '"');
+  if(index != NULL){
+    length = (int)(strlen(value) - 2);
+    fprintf(stream, "%d", length);
+  } else {
+    length = (int)strlen(value);
+  }
+
 
   char temp[length];
-  strncpy(temp, litteral + 1, length);
+  strncpy(temp, index == NULL ? value : value + 1, length);
   temp[length] = 0;
 
   fprintf(stream, "%s", temp);
 }
 
-void write_one_operand_call(FILE *stream, CODE code, char *litteral)
+void write_one_operand_call(FILE *stream, CODE code, char *value)
 {
   fprintf(stream, "%d", (int)code);
 
-  write_litteral(stream, litteral);
+  write_litteral(stream, value);
 }
 

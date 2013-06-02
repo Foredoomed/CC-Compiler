@@ -110,7 +110,7 @@ int parse_assignment(FILE *target, char *token, map_t *vars)
 
   if(is_litteral()){
 
-    write_one_operand_call(target, PUSHS, t);
+    write_one_operand_call(target, PUSHS, var);
 
   } else if(is_alpha()){
 
