@@ -74,18 +74,15 @@ void write_simple_call(FILE *stream, CODE code)
 
 void write_litteral(FILE *stream, char *value)
 {
-  fprintf(stream, "%s", "S");
-
-  /* Remove double quoters */
   int length;
   char *index = strchr(value, '"');
   if(index != NULL){
-    length = (int)(strlen(value) - 2);
+    fprintf(stream, "%s", "S");
+    length = (int)(strlen(value) - 2);  /* Remove double quoters */
     fprintf(stream, "%d", length);
   } else {
     length = (int)strlen(value);
   }
-
 
   char temp[length];
   strncpy(temp, index == NULL ? value : value + 1, length);
