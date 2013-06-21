@@ -23,7 +23,7 @@
 #include "utils.h"
 
 
-#define MAX 1024
+#define MAX 4*1024*1024 /* 4MB */
 char chs[MAX];
 char token[MAX];
 int pos = 0; /* index of chs */
@@ -85,7 +85,7 @@ BOOL init(const char *file)
 
 BOOL next()
 {
-  char current[] = "\0\0";
+  char current[2] = "\0\0";
 
   current[0] = chs[pos];
 
@@ -130,6 +130,17 @@ BOOL next()
       tpos++;
     }
 
+    current[0] = chs[pos+1];
+    if(current[0] == '='){
+      strcat(token, current);
+      pos++;
+      tpos++;
+    }
+
+  } else if(current[0] == '='){
+    pos++;
+    next();
+
   } else {
 
     strcat(token, current);
@@ -138,11 +149,7 @@ BOOL next()
 
   }
 
-  if(pos == MAX - 1){
-    return false;
-  }
-
-  if(token[0] == 0){
+  if((pos == MAX - 1) || (token[0] == 0)){
     return false;
   }
 

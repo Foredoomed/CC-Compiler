@@ -22,6 +22,7 @@
 #include "utils.h"
 #include "lexer.h"
 #include "code.h"
+#include "type.h"
 #include "hashmap.h"
 
 
@@ -81,17 +82,23 @@ int parse_call(FILE *target, char *token, map_t *vars)
 
 int parse_assignment(FILE *target, char *token, map_t *vars)
 {
-  char temp[6];
-  strncpy(temp, token, 6);
-  temp[6] = 0;
+  int type_length = get_type_length(token);
+  char type[type_length];
+  strncpy(type, token, type_length-1);
+  type[type_length] = '\0';
 
-  int length = strlen(token) - 7;
-  char var[length];
-  strncpy(var, token+6, length);
-  var[length] = 0;
+  int length = 0;
+  if(strchr(token,'=') == NULL){
+    length = strlen(token) - type_length + 1;
+  } else {
+    length = strlen(token) - type_length;
+  }
+  char var_name[length];
+  strncpy(var_name, token+type_length-1, length);
+  var_name[length] = '\0';
 
-  if(strcmp(temp, "string") != 0){
-    printf("The assignment only supports string\n");
+  if(strcmp(type, "string") != 0){
+    printf("Syntax error : only supports string assignment\n");
     return 1;
   }
 
@@ -102,24 +109,23 @@ int parse_assignment(FILE *target, char *token, map_t *vars)
 
   char *t = get_token(); /* It changes */
   int len = strlen(t);
-  char value[len];
-  strcpy(value, t);
-  value[len] = 0;
-
-  int v = hashmap_get(*vars, var, (void*)value);
+  char var_value[len];
+  strcpy(var_value, t);
+  var_value[len] = '\0';
 
   if(is_litteral()){
 
-    write_one_operand_call(target, PUSHS, var);
+    write_one_operand_call(target, PUSHS, var_value);
 
   } else if(is_alpha()){
+    int found = hashmap_get(*vars, var_name, (void*)var_value);
 
-    if(v == MAP_MISSING){
-      printf("The variable %s does not exist\n", var);
+    if((found == MAP_MISSING) && (type_length == 0)){
+      printf("The variable %s does not exist\n", var_name);
       return 1;
     }
 
-    write_one_operand_call(target, PUSHV, var);
+    write_one_operand(target, PUSHV, found);
   }
 
   if(next() == false || is_stop() == false){
@@ -127,8 +133,8 @@ int parse_assignment(FILE *target, char *token, map_t *vars)
     return 1;
   }
 
-  hashmap_put(*vars, var, value);
-  write_one_operand_call(target, ASSIGN, var);
+  hashmap_put(*vars, var_name, var_value);
+  write_variable_name(target, ASSIGN, var_name);
 
   return 0;
 }
@@ -149,7 +155,7 @@ int scan(FILE *target)
       return 1;
     }
 
-    char *t = get_token();
+    char *current_token = get_token();
 
     if(next() == false){
 
@@ -160,14 +166,19 @@ int scan(FILE *target)
 
     if(is_left()){
 
-      ret = parse_call(target, t, &vars);  /* It is a call */
+      ret = parse_call(target, current_token, &vars);  /* It is a call */
 
-    } else if(next() == true && is_assignment()){
+    } else if(is_assignment()){
 
-      ret = parse_assignment(target, t, &vars);  /* It is an assignment */
+      ret = parse_assignment(target, current_token, &vars);  /* It is an assignment */
 
     } else {
       printf("Not a valid instruction\n");
+      return 1;
+    }
+
+    if(ret == 1 ){
+      printf("Syntax error\n");
       return 1;
     }
 

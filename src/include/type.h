@@ -23,11 +23,11 @@
 
 typedef enum type
 {
-  STRING = 0,
+  TYPE_STRING = 0,
 
-  INT = 1
+  TYPE_INT = 1
 
-} TYPE:
+} TYPE;
 
 
 #endif

@@ -98,3 +98,27 @@ void write_one_operand_call(FILE *stream, CODE code, char *value)
   write_litteral(stream, value);
 }
 
+int get_type_length(const char *token)
+{
+  int ret = 0;
+  if(strstr(token, "string") != NULL){
+    ret = 7;
+  }else if(strstr(token, "int") != NULL){
+    ret = 4;
+  }
+
+  return ret;
+}
+
+void write_one_operand(FILE *stream, CODE code, int value)
+{
+  fprintf(stream, "%d", (int)code);
+  fprintf(stream, "%d", value);
+}
+
+void write_variable_name(FILE *stream, CODE code, char *value)
+{
+  fprintf(stream, "%d", (int)code);
+  fprintf(stream, "%s", value);
+}
+
