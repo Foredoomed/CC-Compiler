@@ -19,27 +19,24 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "utils.h"
 #include "lexer.h"
 #include "code.h"
 #include "type.h"
-#include "hashmap.h"
+#include "hash.h"
 
 
-int parse_call(FILE *target, char *token, map_t *vars)
+int parse_call(FILE *target, char *function, hash_t *var_map)
 {
-  int len = strlen(token) - 1;
-  char temp[len];
-  strncpy(temp, token, len);
-  temp[len] = 0;
 
-  if(strcmp(temp, "print") != 0){
-    printf("The function call %s is not supported\n", temp);
+  if(strcmp(function, "print") != 0){
+    printf("The function call %s is not supported\n", function);
     return 1;
   }
 
   if(next() == false){
-    printf("Not enough arguments to the function call %s\n", temp);
+    printf("Not enough arguments to the function call %s\n", function);
     return 1;
   }
 
@@ -48,16 +45,16 @@ int parse_call(FILE *target, char *token, map_t *vars)
     write_one_operand_call(target, PUSHS, call);
 
   } else if(is_alpha()){
-    char *var = get_token();
-    char *value;
-    int v = hashmap_get(*vars, var, (void*)value);
+    char *var_name = get_token();
 
-    if(v == MAP_MISSING){
-      printf("The variable %s does not exist\n", var);
+    char *var_value = hash_lookup(var_map, var_name);
+
+    if(NULL == var_value){
+      printf("The variable %s does not exist\n", var_name);
       return 1;
     }
 
-    write_one_operand_call(target, PUSHV, value);
+    write_one_operand_call(target, PUSHV, var_name);
 
   } else {
 
@@ -80,24 +77,35 @@ int parse_call(FILE *target, char *token, map_t *vars)
   return 0;
 }
 
-int parse_assignment(FILE *target, char *token, map_t *vars)
+int parse_assignment(FILE *target, char *token, hash_t *var_map)
 {
-  int type_length = get_type_length(token);
-  char type[type_length];
-  strncpy(type, token, type_length-1);
-  type[type_length] = '\0';
+  //int type_length = strlen(token);
+  //char type[type_length];
+  //strncpy(type, token, type_length-1);
+  //type[type_length] = '\0';
 
-  int length = 0;
-  if(strchr(token,'=') == NULL){
-    length = strlen(token) - type_length + 1;
-  } else {
-    length = strlen(token) - type_length;
-  }
-  char var_name[length];
-  strncpy(var_name, token+type_length-1, length);
-  var_name[length] = '\0';
 
-  if(strcmp(type, "string") != 0){
+  // int length = 0;
+  // if(strchr(token,'=') == NULL){
+  //   length = strlen(token) - type_length + 1;
+  // } else {
+  //   length = strlen(token) - type_length;
+  // }
+  // char var_name[length];
+  // strncpy(var_name, token+type_length-1, length);
+  // var_name[length] = '\0';
+  int var_type_length = strlen(token);
+  char var_type[var_type_length + 1];
+  memcpy(var_type, token, var_type_length);
+  var_type[var_type_length] = '\0';
+
+  char *current = get_token();
+  int var_name_length = strlen(current);
+  char var_name[var_name_length];
+  memcpy(var_name, current, var_name_length - 1);
+  var_name[var_name_length-1] = '\0';
+
+  if(strcmp(var_type, "string") != 0){
     printf("Syntax error : only supports string assignment\n");
     return 1;
   }
@@ -107,25 +115,30 @@ int parse_assignment(FILE *target, char *token, map_t *vars)
      return 1;
   }
 
-  char *t = get_token(); /* It changes */
-  int len = strlen(t);
-  char var_value[len];
-  strcpy(var_value, t);
-  var_value[len] = '\0';
+  current = get_token();
+  // int len = strlen(t);
+  // char var_value[len];
+  // strcpy(var_value, t);
+  // var_value[len] = '\0';
+  int var_value_length = strlen(current);
+  char var_value[var_value_length + 1];
+  memcpy(var_value, current, var_value_length);
+  var_value[var_value_length] = '\0';
 
   if(is_litteral()){
 
     write_one_operand_call(target, PUSHS, var_value);
 
   } else if(is_alpha()){
-    int found = hashmap_get(*vars, var_name, (void*)var_value);
 
-    if((found == MAP_MISSING) && (type_length == 0)){
+    char *var_value = hash_lookup(var_map, var_name);
+
+    if(NULL == var_value){
       printf("The variable %s does not exist\n", var_name);
       return 1;
     }
 
-    write_one_operand(target, PUSHV, found);
+    write_one_operand_call(target, PUSHV, var_name);
   }
 
   if(next() == false || is_stop() == false){
@@ -133,7 +146,7 @@ int parse_assignment(FILE *target, char *token, map_t *vars)
     return 1;
   }
 
-  hashmap_put(*vars, var_name, var_value);
+  hash_insert(var_map, var_name, var_value);
   write_variable_name(target, ASSIGN, var_name);
 
   return 0;
@@ -141,7 +154,8 @@ int parse_assignment(FILE *target, char *token, map_t *vars)
 
 int scan(FILE *target)
 {
-  map_t vars = hashmap_new();
+  hash_t *var_map = malloc(sizeof(hash_t));
+  hash_init(var_map, 1024);
 
   write_header(target);
 
@@ -157,6 +171,9 @@ int scan(FILE *target)
 
     char *current_token = get_token();
 
+    char *temp;
+    strcpy(temp, current_token);
+
     if(next() == false){
 
       printf("Incomplete instruction\n");
@@ -166,11 +183,11 @@ int scan(FILE *target)
 
     if(is_left()){
 
-      ret = parse_call(target, current_token, &vars);  /* It is a call */
+      ret = parse_call(target, temp, var_map);  /* It is a call */
 
     } else if(is_assignment()){
 
-      ret = parse_assignment(target, current_token, &vars);  /* It is an assignment */
+      ret = parse_assignment(target, temp, var_map);  /* It is an assignment */
 
     } else {
       printf("Not a valid instruction\n");
@@ -214,7 +231,7 @@ int compile(const char *file)
   int length;
 
   /* make xxx.ccs to xxx.ccc */
-  if(name != NULL){
+  if(NULL != name){
     length = strlen(name) - 2;
   }else {
     length = strlen(file) - 1;
@@ -243,7 +260,7 @@ int compile(const char *file)
 
   double t = elapsed(start, end);
 
-  printf("Finished in %lf\n", t);
+  printf("Finished in %.000f seconds\n", t);
 
   return result;
 

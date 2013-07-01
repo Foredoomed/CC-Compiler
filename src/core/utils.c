@@ -21,6 +21,7 @@
 #include <string.h>
 #include <time.h>
 #include "code.h"
+#include "util.h"
 
 
 long get_time()
@@ -30,10 +31,7 @@ long get_time()
 
 double elapsed(long start, long end)
 {
-  //double elapsed = (second.tv_sec - first.tv_sec) * 1000.0;
-  //elapsed += (second.tv_usec - first.tv_usec) / 1000.0;
-
-  return (end - start) / 1000.0;
+  return difftime(start, end);
 }
 
 void read_char(const char *file, char chs[])
@@ -98,6 +96,24 @@ void write_one_operand_call(FILE *stream, CODE code, char *value)
   write_litteral(stream, value);
 }
 
+void long_to_string(long src, char *dest)
+{
+  const int n = snprintf(NULL, 0, "%lu", src);
+  snprintf(dest, n+1, "%lu", src);
+
+}
+
+void write_variable_key(FILE *stream, CODE code, long key)
+{
+  fprintf(stream, "%d", (int)code);
+
+  char value[128];
+
+  long_to_string(key, value);
+
+  write_litteral(stream, value);
+}
+
 int get_type_length(const char *token)
 {
   int ret = 0;
@@ -110,15 +126,18 @@ int get_type_length(const char *token)
   return ret;
 }
 
-void write_one_operand(FILE *stream, CODE code, int value)
+void write_one_operand(FILE *stream, CODE code, char *value)
 {
   fprintf(stream, "%d", (int)code);
-  fprintf(stream, "%d", value);
+  fprintf(stream, "%s", value);
 }
 
 void write_variable_name(FILE *stream, CODE code, char *value)
 {
   fprintf(stream, "%d", (int)code);
+  fprintf(stream, "%d", (int)strlen(value));
   fprintf(stream, "%s", value);
 }
+
+
 

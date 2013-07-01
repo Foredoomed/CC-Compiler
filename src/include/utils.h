@@ -39,12 +39,18 @@ void write_simple_call(FILE *stream, CODE code);
 
 void write_one_operand_call(FILE *stream, CODE code, char *litteral);
 
-void write_one_operand(FILE *stream, CODE code, int value);
+void write_variable_key(FILE *stream, CODE code, long key);
+
+void write_one_operand(FILE *stream, CODE code, char *value);
 
 void write_litteral(FILE *stream, char *litteral);
 
 void write_variable_name(FILE *stream, CODE code, char *value);
 
 int get_type_length(const char *token);
+
+void copy(char *dest, char *src);
+
+void long_to_string(long src, char *dest);
 
 #endif

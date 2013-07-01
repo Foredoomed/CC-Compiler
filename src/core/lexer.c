@@ -90,6 +90,9 @@ BOOL next()
   current[0] = chs[pos];
 
   while(isspace(current[0]) && current[0] != '\0'){
+
+    memset(token, 0, sizeof(token)); /* Clear the array */
+    tpos = 0;
     current[0] = chs[++pos];
   }
 
@@ -115,24 +118,27 @@ BOOL next()
 
   } else if(isalpha(current[0])){
 
-    if(tpos == 0){
+    //if(tpos == 0){
       memset(token, 0, sizeof(token)); /* Clear the array */
       strcpy(token, current);
       tpos = 1;
 
-    } else {
-      strcat(token, current);
-      tpos++;
-    }
+    //} else {
+    //  strcat(token, current);
+    //  tpos++;
+    //}
 
     while((current[0] = chs[++pos]) && isalpha(current[0])){
       strcat(token, current);
       tpos++;
     }
 
-    current[0] = chs[pos+1];
+    while(isspace(current[0]) && current[0] != '\0'){
+      current[0] = chs[++pos];
+    }
+
     if(current[0] == '='){
-      strcat(token, current);
+      strcat(token, "=");
       pos++;
       tpos++;
     }

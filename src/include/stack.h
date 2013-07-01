@@ -23,8 +23,8 @@
 
 #include "core.h"
 
-#define MAXSTACK = 1024
-#define EMPEYSTACK = -1
+#define MAXSTACK 1024
+#define EMPEYSTACK -1
 
 int top = EMPTYSTACK;
 char items[MAXSTACK];
