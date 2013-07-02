@@ -54,7 +54,7 @@ int parse_call(FILE *target, char *function, hash_t *var_map)
       return 1;
     }
 
-    write_one_operand_call(target, PUSHV, var_name);
+    write_variable_name(target, PUSHV, var_name);
 
   } else {
 
@@ -79,21 +79,6 @@ int parse_call(FILE *target, char *function, hash_t *var_map)
 
 int parse_assignment(FILE *target, char *token, hash_t *var_map)
 {
-  //int type_length = strlen(token);
-  //char type[type_length];
-  //strncpy(type, token, type_length-1);
-  //type[type_length] = '\0';
-
-
-  // int length = 0;
-  // if(strchr(token,'=') == NULL){
-  //   length = strlen(token) - type_length + 1;
-  // } else {
-  //   length = strlen(token) - type_length;
-  // }
-  // char var_name[length];
-  // strncpy(var_name, token+type_length-1, length);
-  // var_name[length] = '\0';
   int var_type_length = strlen(token);
   char var_type[var_type_length + 1];
   memcpy(var_type, token, var_type_length);
@@ -116,10 +101,6 @@ int parse_assignment(FILE *target, char *token, hash_t *var_map)
   }
 
   current = get_token();
-  // int len = strlen(t);
-  // char var_value[len];
-  // strcpy(var_value, t);
-  // var_value[len] = '\0';
   int var_value_length = strlen(current);
   char var_value[var_value_length + 1];
   memcpy(var_value, current, var_value_length);
@@ -138,7 +119,7 @@ int parse_assignment(FILE *target, char *token, hash_t *var_map)
       return 1;
     }
 
-    write_one_operand_call(target, PUSHV, var_name);
+    write_variable_name(target, PUSHV, var_name);
   }
 
   if(next() == false || is_stop() == false){
@@ -202,7 +183,7 @@ int scan(FILE *target)
   }
 
   write_end(target);
-
+  free(var_map);
   return ret;
 
 }
