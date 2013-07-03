@@ -29,7 +29,7 @@ BOOL next();
 
 char *get_token();
 
-BOOL is_litteral();
+BOOL is_string();
 
 BOOL is_left();
 

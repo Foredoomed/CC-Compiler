@@ -26,7 +26,7 @@
 
 int compile(const char *file);
 
-int scan(FILE *target);
+int scan(const FILE *target);
 
 void parse_call();
 

@@ -1,4 +1,4 @@
-/***********************************************************************
+  /***********************************************************************
 **
 **  Clean C
 **
@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <ctype.h>
+#include "lexer.h"
 #include "core.h"
 #include "utils.h"
 
@@ -35,7 +36,7 @@ char *get_token()
   return token;
 }
 
-BOOL is_litteral()
+BOOL is_string()
 {
   return token[tpos - 1] == '"';
 }
@@ -62,7 +63,7 @@ BOOL is_parenthesis()
 
 BOOL is_call()
 {
-  return !is_parenthesis() && !is_litteral() && !is_stop();
+  return !is_parenthesis() && !is_string() && !is_stop();
 }
 
 int is_alpha()

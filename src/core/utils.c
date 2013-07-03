@@ -70,7 +70,7 @@ void write_simple_call(FILE *stream, CODE code)
   fprintf(stream, "%d", (int)code);
 }
 
-void write_litteral(FILE *stream, char *value)
+void write_string_operand(FILE *stream, char *value)
 {
   int length;
   char *index = strchr(value, '"');
@@ -93,37 +93,7 @@ void write_one_operand_call(FILE *stream, CODE code, char *value)
 {
   fprintf(stream, "%d", (int)code);
 
-  write_litteral(stream, value);
-}
-
-void long_to_string(long src, char *dest)
-{
-  const int n = snprintf(NULL, 0, "%lu", src);
-  snprintf(dest, n+1, "%lu", src);
-
-}
-
-void write_variable_key(FILE *stream, CODE code, long key)
-{
-  fprintf(stream, "%d", (int)code);
-
-  char value[128];
-
-  long_to_string(key, value);
-
-  write_litteral(stream, value);
-}
-
-int get_type_length(const char *token)
-{
-  int ret = 0;
-  if(strstr(token, "string") != NULL){
-    ret = 7;
-  }else if(strstr(token, "int") != NULL){
-    ret = 4;
-  }
-
-  return ret;
+  write_string_operand(stream, value);
 }
 
 void write_one_operand(FILE *stream, CODE code, char *value)

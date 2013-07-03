@@ -40,13 +40,14 @@ int parse_call(FILE *target, char *function, hash_t *var_map)
     return 1;
   }
 
-  if(is_litteral()){
+  if(is_string()){
+
     char *call = get_token();
     write_one_operand_call(target, PUSHS, call);
 
   } else if(is_alpha()){
-    char *var_name = get_token();
 
+    char *var_name = get_token();
     char *var_value = hash_lookup(var_map, var_name);
 
     if(NULL == var_value){
@@ -58,7 +59,7 @@ int parse_call(FILE *target, char *function, hash_t *var_map)
 
   } else {
 
-    printf("Can only pass litteral or a variable to a function call\n");
+    printf("Can only pass string or a variable to a function call\n");
     return 1;
   }
 
@@ -106,7 +107,7 @@ int parse_assignment(FILE *target, char *token, hash_t *var_map)
   memcpy(var_value, current, var_value_length);
   var_value[var_value_length] = '\0';
 
-  if(is_litteral()){
+  if(is_string()){
 
     write_one_operand_call(target, PUSHS, var_value);
 
