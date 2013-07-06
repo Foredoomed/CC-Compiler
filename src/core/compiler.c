@@ -240,7 +240,7 @@ int compile(const char *file)
 
   long end = get_time();
 
-  double t = elapsed(start, end);
+  double t = elapsed(end, start);
 
   printf("Finished in %.000f seconds\n", t);
 
