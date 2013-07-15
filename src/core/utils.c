@@ -34,25 +34,22 @@ double elapsed(long start, long end)
   return difftime(start, end);
 }
 
-void read_char(const char *file, char chs[])
+void read_char(const char *file, char buffer[])
 {
   FILE *fp;
   fp = fopen(file, "r");
 
   if(NULL == fp){
-    printf("Error opening file : %s\n", file);
+    printf("Cannot open file : %s\n", file);
     return;
   }
 
-  //fread(chs, sizeof(chs), 1, fp);
-
-  char line[32];
-  while(fgets(line, sizeof line, fp) != NULL){
-    strcat(chs, line);
+  char line[128];
+  while(fgets(line, sizeof(line), fp) != NULL){
+    strcat(buffer, line);
   }
 
   fclose(fp);
-
 }
 
 void write_header(FILE *stream)
@@ -109,5 +106,8 @@ void write_variable_name(FILE *stream, CODE code, char *value)
   fprintf(stream, "%s", value);
 }
 
-
+void write_int(FILE *stream, int value)
+{
+  fprintf(stream, "%d", value);
+}
 

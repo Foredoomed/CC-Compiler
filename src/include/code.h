@@ -58,7 +58,9 @@ typedef enum code {
   LESS_THAN_EQUALS = 105,
 
   PRINTI = 110,
-  PRINTS = 111*/
+  PRINTS = 111
+
+  */
 
   PUSHS = 0,
   PRINT = 1,

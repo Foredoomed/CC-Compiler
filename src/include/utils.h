@@ -29,7 +29,7 @@ long get_time();
 
 double elapsed(long start, long end);
 
-void read_char(const char *file, char chs[]);
+void read_char(const char *file, char buffer[]);
 
 void write_header(FILE *stream);
 
@@ -45,7 +45,7 @@ void write_string_operand(FILE *stream, char *value);
 
 void write_variable_name(FILE *stream, CODE code, char *value);
 
-void copy(char *dest, char *src);
+void write_int(FILE *stream, int value);
 
 
 #endif
